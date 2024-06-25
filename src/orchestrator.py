@@ -4,6 +4,7 @@ import time
 from dotenv import load_dotenv
 import os
 from src.services.github.github_client import GitHubClient
+from src.services.github.github_remediation import GithubRemediation
 from src.services.github.github_scanner import GithubScanner
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(name)s] - %(levelname)s - %(message)s')
@@ -17,6 +18,10 @@ def orchestrate():
     # Run scanner
     scanner = GithubScanner(github_client)
     scanner_results = scanner.scan()
+
+    # Run remediation
+    remediation = GithubRemediation(github_client, scanner_results)
+    remediation.remediate()
 
 
 if __name__ == "__main__":
