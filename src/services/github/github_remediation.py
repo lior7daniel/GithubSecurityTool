@@ -92,8 +92,3 @@ if __name__ == "__main__":
     scanner_results = BaseRemediation.load_scanner_results(args.scanner_results_path)
     remediation = GithubRemediation(github_client, scanner_results)
     remediation.remediate()
-
-    # remediation = Remediation(github_client, github_scanner_results)
-    # list_of_files = glob('results/scan_results_*.json')
-    # latest_file = max(list_of_files, key=os.path.getctime)
-    # remediation.remediate(latest_file)
