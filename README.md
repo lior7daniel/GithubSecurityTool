@@ -69,10 +69,13 @@ This will scan your GitHub account and save the scan results to a JSON file in t
 To run the GitHub remediation independently, execute the following command:
 
 ```bash
-python -m src.services.github.github_remediation --scanner-results-path path/to/your/scanner_results.json
+python -m src.services.github.github_remediation --service-type github --scanner-results-path path/to/your/scanner_results.json
 ```
 
-If you do not specify `--scanner-results-path`, the script will automatically use the latest scan results file from the results/github directory.
+The --service-type flag is mandatory and specifies the type of service to remediate. Currently, only "github" is supported.
+
+If you do not specify --scanner-results-path, the script will automatically use the latest scan results file from the results/github directory.
+
 
 ### Running the Orchestrator
 The orchestrator handles running both the scanner and the remediation sequentially. To run the orchestrator, execute:
