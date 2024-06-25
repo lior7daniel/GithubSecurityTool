@@ -14,7 +14,6 @@ This project is designed to scan and remediate various environments and cloud ac
   - [Running the Remediation](#running-the-remediation)
   - [Running the Orchestrator](#running-the-orchestrator)
 - [Extending the Project](#extending-the-project)
-- [License](#license)
 
 ## Overview
 
