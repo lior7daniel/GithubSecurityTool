@@ -1,0 +1,30 @@
+[
+    {
+        "name": "repository_public_access",
+        "description": "Ensure the repository is private to prevent unauthorized access.",
+        "nist_category": "Access Control",
+        "check_function": "check_repository_public_access",
+        "fix_function": "fix_repository_public_access"
+    },
+    {
+        "name": "branch_protection",
+        "description": "Enable branch protection to prevent unauthorized changes.",
+        "nist_category": "Configuration Management",
+        "check_function": "check_branch_protection",
+        "fix_function": "fix_branch_protection"
+    },
+    {
+        "name": "secret_scanning",
+        "description": "Enable secret scanning to detect and prevent sensitive information exposure.",
+        "nist_category": "System and Information Integrity",
+        "check_function": null,
+        "fix_function": null
+    },
+    {
+        "name": "dependabot_alerts",
+        "description": "Enable Dependabot alerts for dependency vulnerabilities.",
+        "nist_category": "System and Information Integrity",
+        "check_function": null,
+        "fix_function": null
+    }
+]
