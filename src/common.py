@@ -9,7 +9,7 @@ GITHUB_USER_CONFIGURATION_PATH = f"{GITHUB_CONFIGURATIONS}/user_configurations.j
 GITHUB_REPOSITORY_CONFIGURATION_PATH = f"{GITHUB_CONFIGURATIONS}/repository_configurations.json"
 
 
-class ServiceType(str, Enum):
+class ServiceType(Enum):
     GITHUB = "github"
 
 

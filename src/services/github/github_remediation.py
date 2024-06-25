@@ -6,7 +6,7 @@ import time
 from dotenv import load_dotenv
 
 from src.common import extract_configurations_file, GITHUB_USER_CONFIGURATION_PATH, \
-    GITHUB_REPOSITORY_CONFIGURATION_PATH, ROOT_DIR
+    GITHUB_REPOSITORY_CONFIGURATION_PATH, ROOT_DIR, ServiceType
 from src.remediation import BaseRemediation, logger
 from src.services.github.github_client import GitHubClient
 
@@ -27,14 +27,12 @@ class GithubRemediation(BaseRemediation):
     def fix_repository_public_access(repo):
         repo.edit(private=True)
 
-    @staticmethod
-    def fix_branch_protection(repo):
-        branch = repo.get_branch("main")
+    def fix_branch_protection(self, repo):
+        main_branch_name = self.github_client.get_main_branch_name(repo.full_name)
+        branch = repo.get_branch(main_branch_name)
         branch.edit_protection(
-            required_pull_request_reviews={"dismiss_stale_reviews": True},
-            required_status_checks=None,
+            dismiss_stale_reviews=True,
             enforce_admins=True,
-            restrictions=None
         )
 
     def remediate_user(self, user_results):
@@ -81,7 +79,8 @@ class GithubRemediation(BaseRemediation):
 if __name__ == "__main__":
     start_time = time.time()
 
-    parser = argparse.ArgumentParser(description="Run GitHub remediation based on scanner results.")
+    parser = argparse.ArgumentParser(description="Run the remediation component based on scanner results.")
+    parser.add_argument("--service-type", required=True, choices=[s.value for s in ServiceType], help="Service type to load results from.")
     parser.add_argument("--scanner-results-path", help="Path to the scanner results JSON file.")
     args = parser.parse_args()
 
@@ -89,6 +88,6 @@ if __name__ == "__main__":
     github_token = os.getenv('GITHUB_TOKEN')
     github_client = GitHubClient(github_token)
 
-    scanner_results = BaseRemediation.load_scanner_results(args.scanner_results_path)
+    scanner_results = BaseRemediation.load_scanner_results(service_type=args.service_type, scanner_results_path=args.scanner_results_path)
     remediation = GithubRemediation(github_client, scanner_results)
     remediation.remediate()

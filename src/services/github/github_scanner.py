@@ -1,3 +1,4 @@
+import argparse
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -44,6 +45,10 @@ class GithubScanner(BaseScanner):
 
 if __name__ == "__main__":
     start_time = time.time()
+
+    parser = argparse.ArgumentParser(description="Run the scanner component.")
+    parser.add_argument("--service-type", required=True, choices=[s.value for s in ServiceType], help="Service type for scanning.")
+    args = parser.parse_args()
 
     load_dotenv()
     github_token = os.getenv('GITHUB_TOKEN')

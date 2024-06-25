@@ -1,15 +1,15 @@
 {
-    "repository_public_access": {
-        "description": "Ensure the repository is private to prevent unauthorized access.",
-        "nist_category": "Access Control",
-        "check_function": "check_repository_public_access",
-        "fix_function": "fix_repository_public_access"
-    },
     "branch_protection": {
         "description": "Enable branch protection to prevent unauthorized changes.",
         "nist_category": "Configuration Management",
         "check_function": "check_branch_protection",
         "fix_function": "fix_branch_protection"
+    },
+    "repository_public_access": {
+        "description": "Ensure the repository is private to prevent unauthorized access.",
+        "nist_category": "Access Control",
+        "check_function": "check_repository_public_access",
+        "fix_function": "fix_repository_public_access"
     },
     "secret_scanning": {
         "description": "Enable secret scanning to detect and prevent sensitive information exposure.",
