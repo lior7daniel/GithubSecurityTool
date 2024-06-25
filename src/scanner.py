@@ -20,13 +20,6 @@ class BaseScanner(ABC):
     def scan(self):
         pass
 
-    @staticmethod
-    def extract_configurations_file(path):
-        with open(path, 'r') as f:
-            configurations = json.load(f)
-
-        return configurations
-
     def save_scan_result_file(self):
         timestamp = datetime.utcnow().strftime('%Y-%m-%d--%H:%M:%S')
 
@@ -36,5 +29,7 @@ class BaseScanner(ABC):
 
         with open(filename, 'w') as f:
             json.dump(self.results, f, indent=4)
+
+        logger.info(f"Output file created successfully - file name: {filename}")
 
         return filename

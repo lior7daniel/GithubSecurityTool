@@ -1,3 +1,5 @@
+from typing import Dict
+
 from github import GithubException
 
 from src.scanner import logger
@@ -22,14 +24,14 @@ class RepositoryHandler:
     def check_repository_public_access(repo):
         return not repo.private
 
-    def run(self, configurations):
+    def run(self, configurations: Dict[str, Dict[str, str]]):
         logger.info("Scanning repositories")
         repos = self.repos
 
         results = []
         for repo in repos:
             repo_results = []
-            for config in configurations:
+            for config_name, config in configurations.items():
                 try:
                     if "check_function" in config and not config.get("check_function"):
                         continue    # information about the missing function should be handled in other test
@@ -37,12 +39,12 @@ class RepositoryHandler:
                     check_function = getattr(self, config["check_function"])
                     is_misconfigured = check_function(repo)
                     repo_results.append({
-                        "name": config["name"],
+                        "name": config_name,
                         "description": config["description"],
                         "is_misconfigured": is_misconfigured
                     })
                 except Exception as e:
-                    logger.warning(f"Error checking configuration for repository {repo.name}: {e}")
+                    logger.warning(f"Failed checking {config_name=} for repository {repo.name}: {e}")
                     continue
 
             results.append({

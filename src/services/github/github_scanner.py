@@ -1,27 +1,25 @@
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
+from typing import Dict
+
 from dotenv import load_dotenv
-from src.common import ROOT_DIR, ServiceType, BaseClient
+from src.common import ServiceType, extract_configurations_file, GITHUB_USER_CONFIGURATION_PATH, \
+    GITHUB_REPOSITORY_CONFIGURATION_PATH
 from src.scanner import BaseScanner, logger
 from src.services.github.github_client import GitHubClient
 from src.services.github.scan_handlers.repository_handler import RepositoryHandler
 from src.services.github.scan_handlers.user_handler import UserHandler
 
-GITHUB_CONFIGURATIONS = os.path.join(ROOT_DIR, 'services', 'github', 'configurations')
-USER_CONFIGURATION_PATH = f"{GITHUB_CONFIGURATIONS}/user_configurations.json"
-REPOSITORY_CONFIGURATION_PATH = f"{GITHUB_CONFIGURATIONS}/repository_configurations.json"
-HANDLERS = os.path.join(ROOT_DIR, 'services', 'github', 'scan_handlers')
-
 
 class GithubScanner(BaseScanner):
-    def __init__(self, github_client: BaseClient):
+    def __init__(self, github_client: GitHubClient):
         super().__init__(service=ServiceType.GITHUB, client=github_client)
         self.user_handler = UserHandler(github_client)
         self.repository_handler = RepositoryHandler(github_client)
-        self.configurations = {
-            "user": self.extract_configurations_file(USER_CONFIGURATION_PATH),
-            "repository": self.extract_configurations_file(REPOSITORY_CONFIGURATION_PATH)
+        self.configurations: Dict[str, Dict[str, Dict[str, str]]] = {
+            "user": extract_configurations_file(GITHUB_USER_CONFIGURATION_PATH),
+            "repository": extract_configurations_file(GITHUB_REPOSITORY_CONFIGURATION_PATH)
         }
 
     def scan(self):
