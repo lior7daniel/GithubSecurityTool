@@ -57,7 +57,7 @@ Create a .env file in the project root directory and add your GitHub token:
     ```
 
 ## Usage
-### Running the Scanner component
+### Running the Scanner
 To run the GitHub scanner independently, execute the following command:
 
 ```bash
@@ -65,7 +65,7 @@ python -m src.services.github.github_scanner
 ```
 This will scan your GitHub account and save the scan results to a JSON file in the results/github directory.
 
-### Running the Remediation component
+### Running the Remediation
 To run the GitHub remediation independently, execute the following command:
 
 ```bash
