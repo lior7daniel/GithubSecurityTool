@@ -61,9 +61,11 @@ Create a .env file in the project root directory and add your GitHub token:
 To run the GitHub scanner independently, execute the following command:
 
 ```bash
-python -m src.services.github.github_scanner
+python -m src.services.github.github_scanner --service-type github
 ```
 This will scan your GitHub account and save the scan results to a JSON file in the results/github directory.
+
+The --service-type flag is mandatory and specifies the type of service to remediate. Currently, only "github" is supported.
 
 ### Running the Remediation
 To run the GitHub remediation independently, execute the following command:
@@ -72,7 +74,7 @@ To run the GitHub remediation independently, execute the following command:
 python -m src.services.github.github_remediation --service-type github --scanner-results-path path/to/your/scanner_results.json
 ```
 
-The --service-type flag is mandatory and specifies the type of service to remediate. Currently, only "github" is supported.
+Also here, the --service-type flag is mandatory and specifies the type of service to remediate. Currently, only "github" is supported.
 
 If you do not specify --scanner-results-path, the script will automatically use the latest scan results file from the results/github directory.
 
