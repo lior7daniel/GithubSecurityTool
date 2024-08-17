@@ -1,4 +1,4 @@
-# Scanner and Remediation Project
+# GitHub Security Tool
 
 This project is designed to scan and remediate various environments and cloud accounts. Currently, it supports scanning and remediating GitHub accounts. The project is built to be easily expanded to support additional services in the future.
 
@@ -36,8 +36,8 @@ The project architecture is designed to be modular and extensible, enabling supp
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/varonis.git
-   cd varonis
+   git clone https://github.com/yourusername/github-security-tool.git
+   cd github-security-tool
     ```
 2. Create a virtual environment and activate it:
     ```bash
