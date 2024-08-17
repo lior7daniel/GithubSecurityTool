@@ -1,4 +1,4 @@
-# Varonis Scanner and Remediation Project
+# Scanner and Remediation Project
 
 This project is designed to scan and remediate various environments and cloud accounts. Currently, it supports scanning and remediating GitHub accounts. The project is built to be easily expanded to support additional services in the future.
 
@@ -17,7 +17,7 @@ This project is designed to scan and remediate various environments and cloud ac
 
 ## Overview
 
-The Varonis Scanner and Remediation project provides tools to:
+The Scanner and Remediation project provides tools to:
 
 1. Scan GitHub accounts for misconfigurations.
 2. Automatically remediate identified misconfigurations.
