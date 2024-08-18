@@ -1,0 +1,32 @@
+{
+  "main_branch_protection": {
+    "description": "Enable branch protection to prevent unauthorized changes.",
+    "nist_category": "Configuration Management",
+    "check_function": "check_main_branch_protection",
+    "fix_function": "fix_branch_protection"
+  },
+  "repository_public_access": {
+    "description": "Ensure the repository is private to prevent unauthorized access.",
+    "nist_category": "Access Control",
+    "check_function": "check_repository_public_access",
+    "fix_function": "fix_repository_public_access"
+  },
+  "dependabot_alerts": {
+    "description": "Enable Dependabot alerts for dependency vulnerabilities.",
+    "nist_category": "System and Information Integrity",
+    "check_function": "check_dependabot_alerts",
+    "fix_function": "check_dependabot_alerts"
+  },
+  "encrypted_secrets": {
+    "description": "Ensure repository secrets are encrypted.",
+    "nist_category": "System and Information Integrity",
+    "check_function": "check_encrypted_secrets",
+    "fix_function": "fix_encrypted_secrets"
+  },
+  "repository_access": {
+    "description": "Ensure repository access is restricted to necessary users.",
+    "nist_category": "Access Control",
+    "check_function": "check_repository_access",
+    "fix_function": "fix_repository_access"
+  }
+}
