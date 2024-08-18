@@ -3,9 +3,10 @@ import time
 
 from dotenv import load_dotenv
 import os
-from src.services.github.github_client import GitHubClient
-from src.services.github.github_remediation import GithubRemediation
-from src.services.github.github_scanner import GithubScanner
+
+from src.remediation.github_remediation import GithubRemediation
+from src.github_client import GitHubClient
+from src.scanner.scanner import GithubScanner
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(name)s] - %(levelname)s - %(message)s')
 logger = logging.getLogger("ORCHESTRATOR")

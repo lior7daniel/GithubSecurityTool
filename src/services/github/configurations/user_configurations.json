@@ -1,9 +1,0 @@
-{
-    "require_2fa": {
-        "description": "Ensure 2-factor authentication is required for all users.",
-        "nist_category": "Identification and Authentication",
-        "check_function": "check_require_2fa",
-        "fix_function": "fix_require_2fa"
-    }
-}
-

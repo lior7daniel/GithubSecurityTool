@@ -1,6 +1,6 @@
 from github import Github
 
-from src.common import BaseClient
+from src.scanner.common import BaseClient
 
 
 class GitHubClient(BaseClient):
