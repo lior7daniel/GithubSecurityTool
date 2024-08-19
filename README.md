@@ -72,6 +72,7 @@ python -m src.remediation.remediation.py --scanner-results-path path/to/your/sca
 ```
 
 the --scanner-results-path flag is optional and specifies the scanner results file path. 
+
 the --remediation-user-interface flag is optional and specify weather to enable the remediation user interface. 
 
 ### Running the Orchestrator
