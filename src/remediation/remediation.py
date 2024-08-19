@@ -1,34 +1,49 @@
-# import json
-# import logging
-# import os
-# from abc import ABC, abstractmethod
-#
-# from src.scanner.common import ROOT_DIR
-#
-# logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(name)s] - %(levelname)s - %(message)s")
-# logger = logging.getLogger("REMEDIATION")
-#
-#
-# class BaseRemediation(ABC):
-#     def __init__(self, scanner_results):
-#         self.scanner_results = scanner_results
-#
-#     @abstractmethod
-#     def remediate(self):
-#         pass
-#
-#     @staticmethod
-#     def load_scanner_results(service_type: str, scanner_results_path: str = None):
-#         if scanner_results_path:
-#             if not os.path.exists(scanner_results_path):
-#                 raise FileNotFoundError(f"Scanner results file '{scanner_results_path}' not found.")
-#             with open(scanner_results_path, 'r') as f:
-#                 return json.load(f)
-#         else:
-#             results_dir = os.path.join(ROOT_DIR, 'results', service_type)
-#             result_files = [f for f in os.listdir(results_dir) if f.startswith('scan_results_') and f.endswith('.json')]
-#             if not result_files:
-#                 raise FileNotFoundError("No scan results found in the results directory.")
-#             latest_scan_results = max(result_files)
-#             with open(os.path.join(results_dir, latest_scan_results), 'r') as f:
-#                 return json.load(f)
+import argparse
+import os
+import time
+
+from dotenv import load_dotenv
+from concurrent.futures import ThreadPoolExecutor
+
+from src.remediation.common import load_scanner_results, logger
+from src.remediation.remediation_handlers.repository_handler import RepositoryRemediationHandler
+from src.remediation.remediation_handlers.user_handler import UserRemediationHandler
+from src.github_client import GitHubClient
+
+
+class Remediation:
+    def __init__(self, client: GitHubClient, scanner_results, remediation_user_interface):
+        self.client = client
+        self.scanner_results = scanner_results
+        self.remediation_user_interface = remediation_user_interface
+
+    def remediate(self):
+        logger.info("*** START SCANNING ***")
+        user_res = self.scanner_results.get("user_results", [])
+        repos_res = self.scanner_results.get("repository_results", [])
+        user_handler = UserRemediationHandler(self.client, user_res)
+        repo_handler = RepositoryRemediationHandler(self.client, repos_res, self.remediation_user_interface)
+
+        with ThreadPoolExecutor() as executor:
+            executor.submit(user_handler.run)
+            executor.submit(repo_handler.run)
+
+
+if __name__ == "__main__":
+    start_time = time.time()
+
+    parser = argparse.ArgumentParser(description="Run the remediation component based on scanner results.")
+    parser.add_argument("--scanner-results-path", help="Path to the scanner results JSON file.")
+    parser.add_argument("--remediation-user-interface", default=False,
+                        help="Set to 'true' to enable remediation user interface")
+
+    args = parser.parse_args()
+
+    load_dotenv()
+    github_token = os.getenv('GITHUB_TOKEN')
+    client = GitHubClient(github_token)
+
+    remediation_user_interface = args.remediation_user_interface == "true"
+    scanner_results = load_scanner_results(scanner_results_path=args.scanner_results_path)
+    remediation = Remediation(client, scanner_results, remediation_user_interface)
+    remediation.remediate()

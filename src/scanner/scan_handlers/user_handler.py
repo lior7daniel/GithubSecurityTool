@@ -1,11 +1,12 @@
-from src.scanner.common import extract_configurations_file, logger, GITHUB_USER_CONFIGURATION_PATH
+from src.configurations.common import extract_configurations_file, USER_CONFIGURATION_FILE
 from src.github_client import GitHubClient
+from src.scanner.common import logger
 
 
-class UserHandler:
-    def __init__(self, github_client: GitHubClient):
-        self.user = github_client.get_user()
-        self.configurations = extract_configurations_file(GITHUB_USER_CONFIGURATION_PATH)
+class UserScannerHandler:
+    def __init__(self, client: GitHubClient):
+        self.user = client.get_user()
+        self.configurations = extract_configurations_file(USER_CONFIGURATION_FILE)
 
     def check_require_2fa(self):
         return not self.user.two_factor_authentication

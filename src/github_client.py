@@ -1,11 +1,9 @@
 from github import Github
 
-from src.scanner.common import BaseClient
 
-
-class GitHubClient(BaseClient):
+class GitHubClient:
     def __init__(self, token):
-        super().__init__(token)
+        self.token = token
         self.client = Github(token)
 
     def get_repository(self, repo_name):
