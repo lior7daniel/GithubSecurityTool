@@ -1,29 +1,25 @@
 import json
 import logging
 import os
-from enum import Enum
-from abc import ABC
+from datetime import datetime
+from typing import Dict, Any
 
 SCANNER_DIR = os.path.dirname(os.path.abspath(__file__))
-GITHUB_CONFIGURATIONS = os.path.join(SCANNER_DIR, 'configurations')
-GITHUB_USER_CONFIGURATION_PATH = f"{GITHUB_CONFIGURATIONS}/user_configurations.json"
-GITHUB_REPOSITORY_CONFIGURATION_PATH = f"{GITHUB_CONFIGURATIONS}/repository_configurations.json"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(name)s] - %(levelname)s - %(message)s")
 logger = logging.getLogger("SCANNER")
 
 
-class ServiceType(Enum):
-    GITHUB = "github"
+def save_scan_result_file(results: Dict[str, Dict[Any, Any]]):
+    timestamp = datetime.utcnow().strftime('%Y-%m-%d_%H:%M:%S')
 
+    directory = f"{SCANNER_DIR}/results"
+    os.makedirs(directory, exist_ok=True)
+    filename = f"{directory}/{timestamp}.json"
 
-def extract_configurations_file(path):
-    with open(path, 'r') as f:
-        configurations = json.load(f)
+    with open(filename, 'w') as f:
+        json.dump(results, f, indent=4)
 
-    return configurations
+    logger.info(f"Output file created successfully - file name: {filename}")
 
-
-class BaseClient(ABC):
-    def __init__(self, token):
-        self.token = token
+    return filename

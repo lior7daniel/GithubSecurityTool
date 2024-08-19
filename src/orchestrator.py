@@ -1,31 +1,39 @@
+import argparse
 import logging
 import time
 
 from dotenv import load_dotenv
 import os
 
-from src.remediation.github_remediation import GithubRemediation
 from src.github_client import GitHubClient
-from src.scanner.scanner import GithubScanner
+from src.remediation.remediation import Remediation
+from src.scanner.scanner import Scanner
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(name)s] - %(levelname)s - %(message)s')
 logger = logging.getLogger("ORCHESTRATOR")
 
 
 def orchestrate():
-    github_token = os.getenv('GITHUB_TOKEN')
-    github_client = GitHubClient(github_token)
+    token = os.getenv('GITHUB_TOKEN')
+    client = GitHubClient(token)
 
     # Run scanner
-    scanner = GithubScanner(github_client)
+    scanner = Scanner(client, args.repo_name)
     scanner_results = scanner.scan()
 
     # Run remediation
-    remediation = GithubRemediation(github_client, scanner_results)
+    remediation_user_interface = args.remediation_user_interface == "true"
+    remediation = Remediation(client, scanner_results, remediation_user_interface)
     remediation.remediate()
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run the scanner component.")
+    parser.add_argument("--repo-name", help="A specific repository to scan.")
+    parser.add_argument("--remediation-user-interface", default=False,
+                        help="Set to 'true' to enable remediation user interface")
+    args = parser.parse_args()
+
     load_dotenv()
 
     start_time = time.time()

@@ -1,63 +1,41 @@
 import argparse
-import json
 import os
 import time
-from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
 from dotenv import load_dotenv
 
-from src.scanner.common import SCANNER_DIR, BaseClient, ServiceType, logger
 from src.github_client import GitHubClient
-from src.scanner.scan_handlers.repository_handler import RepositoryHandler
-from src.scanner.scan_handlers.user_handler import UserHandler
+from src.scanner.common import logger, save_scan_result_file
+from src.scanner.scan_handlers.repository_handler import RepositoryScannerHandler
+from src.scanner.scan_handlers.user_handler import UserScannerHandler
 
 
-class BaseScanner(ABC):
-    def __init__(self, service: ServiceType, client: BaseClient):
-        self.service = service
+class Scanner:
+    def __init__(self, client: GitHubClient, repo_name: str):
         self.client = client
         self.results = {}
-
-    @abstractmethod
-    def scan(self):
-        pass
-
-    def save_scan_result_file(self):
-        timestamp = datetime.utcnow().strftime('%Y-%m-%d--%H:%M:%S')
-
-        directory = f'{SCANNER_DIR}/results/{self.service.value}'
-        filename = f'{directory}/{timestamp}.json'
-        os.makedirs(directory, exist_ok=True)
-
-        with open(filename, 'w') as f:
-            json.dump(self.results, f, indent=4)
-
-        logger.info(f"Output file created successfully - file name: {filename}")
-
-        return filename
-
-
-class GithubScanner(BaseScanner):
-    def __init__(self, client: GitHubClient, repo_name: str):
-        super().__init__(service=ServiceType.GITHUB, client=client)
-        self.repo_name = repo_name
+        self.repo_full_name = client.get_user().login + "/" + repo_name if repo_name else None
 
     def scan(self):
+        logger.info("*** START SCANNING ***")
+
+        user_handler = UserScannerHandler(self.client)
+        repo_handler = RepositoryScannerHandler(self.client, self.repo_full_name)
+
         with ThreadPoolExecutor() as executor:
-            user_scanner = executor.submit(UserHandler(github_client).run)
-            repo_scanner = executor.submit(RepositoryHandler(github_client, self.repo_name).run)
+            user_scanner = executor.submit(user_handler.run)
+            repo_scanner = executor.submit(repo_handler.run)
 
             results = {
                 "metadata": {
-                    "service": self.service.value,
+                    "service": "github",
                 },
                 "user_results": user_scanner.result(),
                 "repository_results": repo_scanner.result()
             }
 
         self.results = results
-        self.save_scan_result_file()
+        save_scan_result_file(results)
 
         return results
 
@@ -71,10 +49,9 @@ if __name__ == "__main__":
 
     load_dotenv()
     github_token = os.getenv('GITHUB_TOKEN')
-    github_client = GitHubClient(github_token)
-    repo_prefix = github_client.get_user().login
+    client = GitHubClient(github_token)
 
-    scanner = GithubScanner(github_client, repo_prefix + "/" + args.repo_name)
+    scanner = Scanner(client, args.repo_name)
     scanner.scan()
 
     duration_time = time.time() - start_time

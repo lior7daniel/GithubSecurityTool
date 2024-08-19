@@ -1,19 +1,20 @@
 from github import GithubException
 
-from src.scanner.common import extract_configurations_file, GITHUB_REPOSITORY_CONFIGURATION_PATH, logger
+from src.configurations.common import extract_configurations_file, REPOSITORY_CONFIGURATION_FILE
+from src.scanner.common import logger
 from src.github_client import GitHubClient
 
 
-class RepositoryHandler:
-    def __init__(self, github_client: GitHubClient, repo_name: str):
-        self.github_client = github_client
-        self.configurations = extract_configurations_file(GITHUB_REPOSITORY_CONFIGURATION_PATH)
+class RepositoryScannerHandler:
+    def __init__(self, client: GitHubClient, repo_name: str):
+        self.client = client
+        self.configurations = extract_configurations_file(REPOSITORY_CONFIGURATION_FILE)
         self.repo_name = repo_name
 
     def check_main_branch_protection(self, repo):
         branch_protection = True
         try:
-            main_branch_name = self.github_client.get_main_branch_name(repo.full_name)
+            main_branch_name = self.client.get_main_branch_name(repo.full_name)
             branch_protection = repo.get_branch(main_branch_name).protected
         except GithubException:
             logger.warning(f"The repository '{repo.name}' has not initiated its main branch yet.")
@@ -68,7 +69,7 @@ class RepositoryHandler:
 
     def scan_repo(self):
         results = []
-        repo = self.github_client.get_repository(self.repo_name)
+        repo = self.client.get_repository(self.repo_name)
         repo_results = self.scan_repo_configurations(repo)
 
         results.append({
@@ -80,7 +81,7 @@ class RepositoryHandler:
 
     def scan_repos(self):
         results = []
-        repos = self.github_client.list_repositories()
+        repos = self.client.list_repositories()
         for repo in repos:
             repo_results = self.scan_repo_configurations(repo)
 
