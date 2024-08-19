@@ -1,6 +1,6 @@
 # GitHub Security Tool
 
-This project is designed to scan and remediate various environments and cloud accounts. Currently, it supports scanning and remediating GitHub accounts. The project is built to be easily expanded to support additional services in the future.
+This project is designed to scan and remediate GitHub accounts.
 
 ## Table of Contents
 
@@ -20,10 +20,7 @@ This project is designed to scan and remediate various environments and cloud ac
 The Scanner and Remediation project provides tools to:
 
 1. Scan GitHub accounts for misconfigurations.
-2. Automatically remediate identified misconfigurations.
-
-The project architecture is designed to be modular and extensible, enabling support for additional services beyond GitHub.
-
+2. Remediate identified misconfigurations.
 
 ## Getting Started
 
@@ -61,23 +58,21 @@ Create a .env file in the project root directory and add your GitHub token:
 To run the GitHub scanner independently, execute the following command:
 
 ```bash
-python -m src.services.github.github_scanner --service-type github
+python -m src.scanner.scanner.py --repo-name name-of-your-repository
 ```
-This will scan your GitHub account and save the scan results to a JSON file in the results/github directory.
+This will scan your GitHub account and save the scan results to a JSON file in the results directory.
 
-The --service-type flag is mandatory and specifies the type of service to remediate. Currently, only "github" is supported.
+The --repo-name flag is optional and specify the branch to scan.
 
 ### Running the Remediation
 To run the GitHub remediation independently, execute the following command:
 
 ```bash
-python -m src.services.github.github_remediation --service-type github --scanner-results-path path/to/your/scanner_results.json
+python -m src.remediation.remediation.py --scanner-results-path path/to/your/scanner_results.json --remediation-user-interface True
 ```
 
-Also here, the --service-type flag is mandatory and specifies the type of service to remediate. Currently, only "github" is supported.
-
-If you do not specify --scanner-results-path, the script will automatically use the latest scan results file from the results/github directory.
-
+the --scanner-results-path flag is optional and specifies the scanner results file path. 
+the --remediation-user-interface flag is optional and specify weather to enable the remediation user interface. 
 
 ### Running the Orchestrator
 The orchestrator handles running both the scanner and the remediation sequentially. To run the orchestrator, execute:
@@ -86,10 +81,3 @@ The orchestrator handles running both the scanner and the remediation sequential
 python -m src.orchestrator
 ```
 This will run the scanner and immediately follow up with the remediation based on the scan results.
-
-## Extending the Project
-To add support for additional services:
-
-1. Create a new directory for your service under src/services.
-2. Implement the client, scanner, and remediation classes similar to the GitHub implementation.
-3. Update the orchestrator to include the new service.
